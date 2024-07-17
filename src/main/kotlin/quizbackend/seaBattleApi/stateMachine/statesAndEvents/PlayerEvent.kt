@@ -6,7 +6,7 @@ enum class PlayerEvent {
     PLACE_ALL_SHIPS,
     START_ATTACK,
     RECEIVE_HIT,
-    BOTH_PLAYERS_ATTACKED,
+    EXIT_FROM_GAME,
     WIN,
     LOSE,
     BACK_IN_MENU,

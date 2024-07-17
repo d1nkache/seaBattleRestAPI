@@ -14,6 +14,8 @@ class PlayerTransition(
         val playerTransitions = listOf(
             PlayerTransition(PlayerState.IN_MENU, Event.EventsOfPlayer(PlayerEvent.CHOOSE_ONLINE_GAME), PlayerState.IN_ONLINE_LOBBY),
             PlayerTransition(PlayerState.IN_MENU, Event.EventsOfPlayer(PlayerEvent.CHOOSE_OFFLINE_GAME), PlayerState.IN_OFFLINE_LOBBY),
+            PlayerTransition(PlayerState.IN_ONLINE_LOBBY, Event.EventsOfPlayer(PlayerEvent.DISCONNECT), PlayerState.IN_MENU),
+            PlayerTransition(PlayerState.IN_OFFLINE_LOBBY, Event.EventsOfPlayer(PlayerEvent.DISCONNECT), PlayerState.IN_MENU),
 
             PlayerTransition(PlayerState.IN_ONLINE_LOBBY, Event.EventsOfPlayer(PlayerEvent.PLACE_ALL_SHIPS), PlayerState.READY_FOR_GAME),
             PlayerTransition(PlayerState.IN_OFFLINE_LOBBY, Event.EventsOfPlayer(PlayerEvent.PLACE_ALL_SHIPS), PlayerState.READY_FOR_GAME),
@@ -25,7 +27,8 @@ class PlayerTransition(
             PlayerTransition(PlayerState.TAKE_HIT, Event.EventsOfPlayer(PlayerEvent.START_ATTACK), PlayerState.ATTACK_ENEMY),
             PlayerTransition(PlayerState.ATTACK_ENEMY, Event.EventsOfPlayer(PlayerEvent.RECEIVE_HIT), PlayerState.TAKE_HIT),
 
-            // Добавить дисконекты
+            PlayerTransition(PlayerState.IN_MENU, Event.EventsOfPlayer(PlayerEvent.RECONNECT), PlayerState.IN_WAITING_ROOM),
+            PlayerTransition(PlayerState.IN_WAITING_ROOM, Event.EventsOfGame(GameEvent.RETURN_PLAYER), PlayerState.IN_GAME),
 
             PlayerTransition(PlayerState.IN_GAME, Event.EventsOfPlayer(PlayerEvent.WIN), PlayerState.WIN_GAME),
             PlayerTransition(PlayerState.IN_GAME, Event.EventsOfPlayer(PlayerEvent.LOSE), PlayerState.LOSE_GAME),

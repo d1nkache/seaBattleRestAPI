@@ -10,7 +10,5 @@ enum class GameEvent {
     BOTH_PLAYERS_ATTACKED,
     RETURN_PLAYER,
     CHOOSE_WINNER,
-    PAUSE_GAME,
-    RESUME_GAME,
     TIMEOUT
 }

@@ -19,7 +19,11 @@ class GameTransition(
             GameTransition(GameState.ONE_PLAYER_READY, Event.EventsOfPlayer(PlayerEvent.PLACE_ALL_SHIPS), GameState.BOTH_PLAYERS_READY),
             GameTransition(GameState.BOTH_PLAYERS_READY, Event.EventsOfGame(GameEvent.ALL_PLAYERS_READY), GameState.ONLINE_GAME_IN_PROCESS),
             GameTransition(GameState.OFFLINE_LOBBY, Event.EventsOfPlayer(PlayerEvent.PLACE_ALL_SHIPS), GameState.OFFLINE_GAME_IN_PROCESS),
+            GameTransition(GameState.ONLINE_LOBBY, Event.EventsOfPlayer(PlayerEvent.DISCONNECT), GameState.MAIN_MENU),
+            GameTransition(GameState.ONE_PLAYER_READY, Event.EventsOfPlayer(PlayerEvent.DISCONNECT), GameState.MAIN_MENU),
+            GameTransition(GameState.BOTH_PLAYERS_READY, Event.EventsOfPlayer(PlayerEvent.DISCONNECT), GameState.MAIN_MENU),
 
+            GameTransition(GameState.ONLINE_GAME_IN_PROCESS, Event.EventsOfPlayer(PlayerEvent.EXIT_FROM_GAME), GameState.OFFLINE_GAME_IN_PROCESS),
             GameTransition(GameState.ONLINE_GAME_IN_PROCESS, Event.EventsOfGame(GameEvent.PAUSE_ON_CHECK_STATUS), GameState.IS_ALL_ONLINE),
             GameTransition(GameState.OFFLINE_GAME_IN_PROCESS, Event.EventsOfGame(GameEvent.PAUSE_ON_CHECK_STATUS), GameState.IS_ALL_ONLINE),
             GameTransition(GameState.IS_ALL_ONLINE, Event.EventsOfGame(GameEvent.PAUSE_ON_CHECK_COUNT_OF_SHIPS), GameState.IS_ALL_ALIVE),
@@ -44,11 +48,7 @@ class GameTransition(
             GameTransition(GameState.OFFLINE_GAME_IN_PROCESS, Event.EventsOfGame(GameEvent.CHOOSE_WINNER), GameState.GAME_OVER),
             GameTransition(GameState.OFFLINE_GAME_IN_PROCESS_WITH_ONE_PLAYER_IN_WAITING_ROOM, Event.EventsOfGame(GameEvent.CHOOSE_WINNER), GameState.GAME_OVER),
 
-            GameTransition(GameState.GAME_OVER, Event.EventsOfPlayer(PlayerEvent.BACK_IN_MENU), GameState.MAIN_MENU),
-            
-            GameTransition(GameState.ONLINE_LOBBY, Event.EventsOfPlayer(PlayerEvent.DISCONNECT), GameState.MAIN_MENU),
-            GameTransition(GameState.ONE_PLAYER_READY, Event.EventsOfPlayer(PlayerEvent.DISCONNECT), GameState.MAIN_MENU),
-            GameTransition(GameState.BOTH_PLAYERS_READY, Event.EventsOfPlayer(PlayerEvent.DISCONNECT), GameState.MAIN_MENU)
+            GameTransition(GameState.GAME_OVER, Event.EventsOfPlayer(PlayerEvent.BACK_IN_MENU), GameState.MAIN_MENU)
         )
     }
 }
