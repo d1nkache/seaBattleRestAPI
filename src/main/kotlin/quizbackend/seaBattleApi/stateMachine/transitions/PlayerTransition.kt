@@ -23,12 +23,10 @@ class PlayerTransition(
             PlayerTransition(PlayerState.IN_GAME, Event.EventsOfPlayer(PlayerEvent.RECEIVE_HIT), PlayerState.TAKE_HIT),
 
             PlayerTransition(PlayerState.TAKE_HIT, Event.EventsOfPlayer(PlayerEvent.START_ATTACK), PlayerState.ATTACK_ENEMY),
-            PlayerTransition(PlayerState.TAKE_HIT, Event.EventsOfGame(GameEvent.PAUSE_ON_CHECK_STATUS), PlayerState.IN_GAME),
-            PlayerTransition(PlayerState.ATTACK_ENEMY, Event.EventsOfGame(GameEvent.PAUSE_ON_CHECK_STATUS), PlayerState.IN_GAME),
-            PlayerTransition(PlayerState.IN_GAME, Event.EventsOfGame(GameEvent.CHECK_COUNT_OF_SHIPS), PlayerState.IN_GAME),
-            PlayerTransition(PlayerState.IN_GAME, Event.EventsOfGame(GameEvent.CHECK_COUNT_OF_PLAYERS), PlayerState.IN_GAME),
-
             PlayerTransition(PlayerState.ATTACK_ENEMY, Event.EventsOfPlayer(PlayerEvent.RECEIVE_HIT), PlayerState.TAKE_HIT),
+
+            // Добавить дисконекты
+
             PlayerTransition(PlayerState.IN_GAME, Event.EventsOfPlayer(PlayerEvent.WIN), PlayerState.WIN_GAME),
             PlayerTransition(PlayerState.IN_GAME, Event.EventsOfPlayer(PlayerEvent.LOSE), PlayerState.LOSE_GAME),
 
