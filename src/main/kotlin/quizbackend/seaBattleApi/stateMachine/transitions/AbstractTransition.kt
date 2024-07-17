@@ -1,6 +1,8 @@
 package quizbackend.seaBattleApi.stateMachine.transitions
 
-abstract class AbstractTransition<State, Event> (
+import quizbackend.seaBattleApi.stateMachine.statesAndEvents.*
+
+abstract class AbstractTransition<State> (
     val currentState: State,
     val event: Event,
     val nextState: State

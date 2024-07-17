@@ -1,4 +1,5 @@
 package quizbackend.seaBattleApi.stateMachine.transitions
 
-class FieldTransistion {
+class FieldTransition {
+
 }
