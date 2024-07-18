@@ -39,7 +39,7 @@ class StateMachine(private val gameId: Int, private val playerId: Int) {
                 if (currentGameTransition != null) {
                     gameState = currentGameTransition.nextState
 
-                        // Влияние на сущности из БД добавить
+                    // Влияние на сущности из БД добавить
 
                     return """Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.playerState.toString()}
                            | Success[GameTransition]: ${currentGameTransition.currentState} -> ${gameState.toString()}""".trimMargin()
@@ -67,7 +67,7 @@ class StateMachine(private val gameId: Int, private val playerId: Int) {
                 if (currentPlayerTransition.nextState != currentPlayer.playerState) {
                     currentPlayer.playerState = currentPlayerTransition.nextState
 
-                // Влияние на сущности из БД добавить
+                    // Влияние на сущности из БД добавить
 
                     return """Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${gameState.toString()}
                            | Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.playerState.toString()}""".trimMargin()
