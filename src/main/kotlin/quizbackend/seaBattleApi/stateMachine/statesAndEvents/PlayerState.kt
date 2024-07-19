@@ -8,7 +8,6 @@ enum class PlayerState {
     IN_GAME,
     ATTACK_ENEMY,
     TAKE_HIT,
-    IN_WAITING_ROOM,
     WIN_GAME,
     LOSE_GAME
 }
