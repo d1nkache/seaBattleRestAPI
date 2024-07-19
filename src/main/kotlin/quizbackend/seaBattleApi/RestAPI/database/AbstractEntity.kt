@@ -16,3 +16,8 @@ abstract class AbstractEntity {
     @Column(nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
 }
+
+
+// игрок вышел окончательно
+// бот вместо игрока
+// из-за сети

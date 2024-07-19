@@ -1,6 +1,14 @@
 spring:
+  main:
+    banner-mode: off
   application:
     name: seaBattleRestApi
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/postgres"
+    username: "postgres"
+    password: "root"
+  jpa:
+    generate-ddl: true
 
 server:
   port: 8000
