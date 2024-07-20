@@ -1,19 +1,16 @@
 
 package quizbackend.seaBattleApi.stateMachine
 
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.transaction.annotation.Transactional
-import quizbackend.seaBattleApi.RestAPI.database.GameEntity
-import quizbackend.seaBattleApi.RestAPI.database.PlayerEntity
-import quizbackend.seaBattleApi.RestAPI.database.dao.GameDao
-import quizbackend.seaBattleApi.RestAPI.database.dao.PlayerDao
-import quizbackend.seaBattleApi.RestAPI.model.response.TransitionResponse
+import quizbackend.seaBattleApi.restAPI.database.GameEntity
+import quizbackend.seaBattleApi.restAPI.database.PlayerEntity
+import quizbackend.seaBattleApi.restAPI.database.dao.GameDao
+import quizbackend.seaBattleApi.restAPI.database.dao.PlayerDao
+import quizbackend.seaBattleApi.restAPI.model.response.TransitionResponse
 import quizbackend.seaBattleApi.stateMachine.statesAndEvents.*
 import quizbackend.seaBattleApi.stateMachine.transitions.AbstractTransition
-import quizbackend.seaBattleApi.stateMachine.transitions.GameTransition
-import quizbackend.seaBattleApi.stateMachine.transitions.PlayerTransition
 
 // в первичном контсукторе я поставил временные заглушки,
 // вместо которых будут данные из бд о текузем юзере
