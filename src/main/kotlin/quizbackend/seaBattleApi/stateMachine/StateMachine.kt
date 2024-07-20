@@ -1,5 +1,9 @@
 package quizbackend.seaBattleApi.stateMachine
 
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import quizbackend.seaBattleApi.RestAPI.database.dao.GameDao
+import quizbackend.seaBattleApi.RestAPI.database.dao.PlayerDao
 import quizbackend.seaBattleApi.stateMachine.statesAndEvents.*
 import quizbackend.seaBattleApi.stateMachine.transitions.AbstractTransition
 import quizbackend.seaBattleApi.stateMachine.transitions.GameTransition
@@ -8,7 +12,12 @@ import quizbackend.seaBattleApi.stateMachine.transitions.PlayerTransition
 // в первичном контсукторе я поставил временные заглушки,
 // вместо которых будут данные из бд о текузем юзере
 
-class StateMachine(private val gameId: Int, private val playerId: Int) {
+
+@Configuration
+class StateMachine(
+    private val playerDao: PlayerDao,
+    private val gameDao: GameDao
+) {
     private var gameState: GameState = GameState.MAIN_MENU
     private var players: MutableMap<String, Player> = mutableMapOf()
 
@@ -55,7 +64,6 @@ class StateMachine(private val gameId: Int, private val playerId: Int) {
     }
 
     private fun handleGameEvent(
-        event: Event,
         currentPlayer: Player?,
         currentPlayerTransition: AbstractTransition<PlayerState>?,
         currentGameTransition: AbstractTransition<GameState>?
@@ -96,7 +104,7 @@ class StateMachine(private val gameId: Int, private val playerId: Int) {
 
         when (event) {
             is Event.EventsOfPlayer -> handlePlayerEvent(event, currentPlayer, currentPlayerTransition, currentGameTransition)
-            is Event.EventsOfGame -> handleGameEvent(event, currentPlayer, currentPlayerTransition, currentGameTransition)
+            is Event.EventsOfGame -> handleGameEvent(currentPlayer, currentPlayerTransition, currentGameTransition)
             is Event.EventsOfField -> handleFieldEvent()
         }
 
