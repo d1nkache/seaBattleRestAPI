@@ -1,6 +1,7 @@
 package quizbackend.seaBattleApi.stateMachine.statesAndEvents
 
 enum class PlayerEvent {
+    INIT,
     CHOOSE_ONLINE_GAME,
     CHOOSE_OFFLINE_GAME,
     PLACE_ALL_SHIPS,

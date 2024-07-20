@@ -10,10 +10,10 @@ import quizbackend.seaBattleApi.stateMachine.statesAndEvents.PlayerState
 @Table(name = "Player")
 class PlayerEntity(
     @Column(nullable = false, updatable = true)
-    var state: PlayerState,
+    var name: String,
 
     @Column(nullable = false, updatable = true)
-    var name: String,
+    var state: PlayerState,
 
     @Column(nullable = false, updatable = true)
     var health: Int,

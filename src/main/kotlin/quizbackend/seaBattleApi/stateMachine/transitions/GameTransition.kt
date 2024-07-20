@@ -1,9 +1,6 @@
 package quizbackend.seaBattleApi.stateMachine.transitions
 
-import quizbackend.seaBattleApi.stateMachine.statesAndEvents.Event
-import quizbackend.seaBattleApi.stateMachine.statesAndEvents.GameEvent
-import quizbackend.seaBattleApi.stateMachine.statesAndEvents.GameState
-import quizbackend.seaBattleApi.stateMachine.statesAndEvents.PlayerEvent
+import quizbackend.seaBattleApi.stateMachine.statesAndEvents.*
 
 class GameTransition(
     gameState: GameState,
@@ -12,6 +9,9 @@ class GameTransition(
 ) : AbstractTransition<GameState>(gameState, event, nextState) {
     companion object {
         val allGameTransitions: List<GameTransition> = listOf(
+            // INIT Transitions
+            GameTransition(GameState.NOT_INIT, Event.EventsOfPlayer(PlayerEvent.INIT), GameState.MAIN_MENU),
+
             // MAIN_MENU Transitions
             GameTransition(GameState.MAIN_MENU, Event.EventsOfPlayer(PlayerEvent.CHOOSE_ONLINE_GAME), GameState.ONLINE_LOBBY),
             GameTransition(GameState.MAIN_MENU, Event.EventsOfPlayer(PlayerEvent.CHOOSE_OFFLINE_GAME), GameState.OFFLINE_LOBBY),

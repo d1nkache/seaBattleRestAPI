@@ -2,6 +2,10 @@ package quizbackend.seaBattleApi.stateMachine
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.jpa.repository.Modifying
+import org.springframework.transaction.annotation.Transactional
+import quizbackend.seaBattleApi.RestAPI.database.GameEntity
+import quizbackend.seaBattleApi.RestAPI.database.PlayerEntity
 import quizbackend.seaBattleApi.RestAPI.database.dao.GameDao
 import quizbackend.seaBattleApi.RestAPI.database.dao.PlayerDao
 import quizbackend.seaBattleApi.stateMachine.statesAndEvents.*
@@ -18,10 +22,66 @@ class StateMachine(
     private val playerDao: PlayerDao,
     private val gameDao: GameDao
 ) {
-    private var gameState: GameState = GameState.MAIN_MENU
-    private var players: MutableMap<String, Player> = mutableMapOf()
+    @Transactional
+    @Modifying
+    fun handlePlayerEvent(
+        currentPlayer: PlayerEntity,
+        currentGame:GameEntity,
+        currentPlayerTransition: AbstractTransition<PlayerState>?,
+        currentGameTransition: AbstractTransition<GameState>?
+    ): Unit {
+        if (currentPlayerTransition != null) {
+            if (currentPlayerTransition.nextState != currentPlayer.state) {
+                currentPlayer.state = currentPlayerTransition.nextState
 
-    private fun <State>findTransition(
+                if (currentGameTransition != null) {
+                    currentGame.state = currentGameTransition.nextState
+                    print("""Success[PlayerTransition]: ${currentPlayerTransition.currentState} -> ${currentPlayer.state}
+                           | Success[GameTransition]: ${currentGameTransition.currentState} -> ${currentGame.state}""".trimMargin())
+                }
+
+                print("Success[PlayerTransition]: ${currentPlayerTransition.currentState} -> ${currentPlayer.state}")
+            }
+
+            print("Error: Current Player State == PlayerTransition.nextState")
+        }
+
+        print("Error: No such Player or PlayerTransition")
+    }
+
+    @Transactional
+    @Modifying
+    fun handleGameEvent(
+        currentPlayer: PlayerEntity,
+        currentGame:GameEntity,
+        currentPlayerTransition: AbstractTransition<PlayerState>?,
+        currentGameTransition: AbstractTransition<GameState>?
+    ): Unit {
+        if (currentGameTransition != null) {
+            currentGame.state = currentGameTransition.nextState
+
+            if (currentPlayerTransition != null)  {
+                if (currentPlayerTransition.nextState != currentPlayer.state) {
+                    currentPlayer.state = currentPlayerTransition.nextState
+
+                    print("""Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${currentGame.state}
+                           | Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.state}""".trimMargin())
+                }
+
+                print("Error: Current Player State == PlayerTransition.nextState")
+            }
+
+            print("Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${currentGame.state.toString()}")
+        }
+
+        print("Error: No such Player or PlayerTransition")
+    }
+
+    private fun handleFieldEvent(): String {
+        TODO("Not implemented yet")
+    }
+
+    fun <State>findTransition(
         event: Event,
         state: State,
         listOfTransition: List<AbstractTransition<State>>
@@ -31,84 +91,19 @@ class StateMachine(
         }
     }
 
-    private fun findPlayerById(playerId: Int) = players.values.find {
-            it.playerId == playerId
-        }
-
-    private fun handlePlayerEvent(
-        event: Event,
-        currentPlayer: Player?,
-        currentPlayerTransition: AbstractTransition<PlayerState>?,
-        currentGameTransition: AbstractTransition<GameState>?
-    ): String {
-        if (currentPlayerTransition != null && currentPlayer != null) {
-            if (currentPlayerTransition.nextState != currentPlayer.playerState) {
-                currentPlayer.playerState = currentPlayerTransition.nextState
-
-                if (currentGameTransition != null) {
-                    gameState = currentGameTransition.nextState
-
-                    // Влияние на сущности из БД добавить
-
-                    return """Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.playerState.toString()}
-                           | Success[GameTransition]: ${currentGameTransition.currentState} -> ${gameState.toString()}""".trimMargin()
-                }
-
-                return "Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.playerState.toString()}"
-            }
-
-            return "Error: Current Player State == PlayerTransition.nextState"
-        }
-
-        return "Error: No such Player or PlayerTransition"
-    }
-
-    private fun handleGameEvent(
-        currentPlayer: Player?,
-        currentPlayerTransition: AbstractTransition<PlayerState>?,
-        currentGameTransition: AbstractTransition<GameState>?
-    ): String {
-        if (currentGameTransition != null) {
-            gameState = currentGameTransition.nextState
-
-            if (currentPlayerTransition != null && currentPlayer != null)  {
-                if (currentPlayerTransition.nextState != currentPlayer.playerState) {
-                    currentPlayer.playerState = currentPlayerTransition.nextState
-
-                    // Влияние на сущности из БД добавить
-
-                    return """Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${gameState.toString()}
-                           | Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.playerState.toString()}""".trimMargin()
-                }
-
-                return "Error: Current Player State == PlayerTransition.nextState"
-            }
-
-            return "Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${gameState.toString()}"
-        }
-
-        return "Error: No such Player or PlayerTransition"
-    }
-
-    private fun handleFieldEvent(): String {
-        TODO("Not implemented yet")
-    }
-
-    fun handleEvent(event: Event): String {
-        val currentPlayer: Player? = findPlayerById(playerId)
-        val currentPlayerTransition = currentPlayer?.let {
-            findTransition(event, it.playerState, PlayerTransition.allPlayerTransitions)
-        }
-        val currentGameTransition: AbstractTransition<GameState>? =
-            findTransition(event, gameState, GameTransition.allGameTransitions)
-
+    fun handleEvent(event: Event,
+                    currentPlayer: PlayerEntity,
+                    currentGame:GameEntity,
+                    currentPlayerTransition: AbstractTransition<PlayerState>?,
+                    currentGameTransition: AbstractTransition<GameState>?
+    ): Unit {
         when (event) {
-            is Event.EventsOfPlayer -> handlePlayerEvent(event, currentPlayer, currentPlayerTransition, currentGameTransition)
-            is Event.EventsOfGame -> handleGameEvent(currentPlayer, currentPlayerTransition, currentGameTransition)
+            is Event.EventsOfPlayer -> handlePlayerEvent(currentPlayer, currentGame, currentPlayerTransition, currentGameTransition)
+            is Event.EventsOfGame -> handleGameEvent(currentPlayer, currentGame, currentPlayerTransition, currentGameTransition)
             is Event.EventsOfField -> handleFieldEvent()
         }
 
-        return "ERROR"
+        print("The transition was successful")
     }
 }
 

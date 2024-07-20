@@ -2,6 +2,7 @@ package quizbackend.seaBattleApi.stateMachine.statesAndEvents
 
 enum class GameState {
     MAIN_MENU,
+    NOT_INIT,
     ONLINE_LOBBY,
     OFFLINE_LOBBY,
     ONE_PLAYER_READY,

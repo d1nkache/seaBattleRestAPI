@@ -11,6 +11,9 @@ class PlayerTransition(
 ) : AbstractTransition<PlayerState>(currentState, event, nextState) {
     companion object {
         val allPlayerTransitions = listOf(
+            // Transitions from INIT state
+            PlayerTransition(PlayerState.NOT_INIT, Event.EventsOfPlayer(PlayerEvent.INIT), PlayerState.IN_MENU),
+
             // Transitions from IN_MENU state
             PlayerTransition(PlayerState.IN_MENU, Event.EventsOfPlayer(PlayerEvent.CHOOSE_ONLINE_GAME), PlayerState.IN_ONLINE_LOBBY),
             PlayerTransition(PlayerState.IN_MENU, Event.EventsOfPlayer(PlayerEvent.CHOOSE_OFFLINE_GAME), PlayerState.IN_OFFLINE_LOBBY),

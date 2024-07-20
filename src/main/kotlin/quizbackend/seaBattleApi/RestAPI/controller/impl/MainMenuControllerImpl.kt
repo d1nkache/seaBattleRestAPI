@@ -1,8 +1,6 @@
 package quizbackend.seaBattleApi.RestAPI.controller.impl
 
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import quizbackend.seaBattleApi.RestAPI.controller.MainMenuController
 import quizbackend.seaBattleApi.RestAPI.service.MainMenuService
 
@@ -11,8 +9,8 @@ import quizbackend.seaBattleApi.RestAPI.service.MainMenuService
 class MainMenuControllerImpl(
     private val service: MainMenuService
 ) : MainMenuController {
-    @PostMapping("/init")
-    override fun initGameEvent(userId: Long) = service.initGame()
+    @GetMapping("/init")
+    override fun initGameEvent(userId: Long, gameId: Long) = service.initGame(userId, gameId)
 
     @PostMapping("/playOnline")
     override fun chooseOnlineGameEvent(userId: Long) = service.chooseOnlineGame(userId)
