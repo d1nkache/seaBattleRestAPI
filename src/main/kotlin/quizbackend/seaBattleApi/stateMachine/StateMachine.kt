@@ -1,3 +1,4 @@
+
 package quizbackend.seaBattleApi.stateMachine
 
 import org.springframework.context.annotation.Bean
@@ -8,6 +9,7 @@ import quizbackend.seaBattleApi.RestAPI.database.GameEntity
 import quizbackend.seaBattleApi.RestAPI.database.PlayerEntity
 import quizbackend.seaBattleApi.RestAPI.database.dao.GameDao
 import quizbackend.seaBattleApi.RestAPI.database.dao.PlayerDao
+import quizbackend.seaBattleApi.RestAPI.model.response.TransitionResponse
 import quizbackend.seaBattleApi.stateMachine.statesAndEvents.*
 import quizbackend.seaBattleApi.stateMachine.transitions.AbstractTransition
 import quizbackend.seaBattleApi.stateMachine.transitions.GameTransition
@@ -27,26 +29,26 @@ class StateMachine(
     fun handlePlayerEvent(
         currentPlayer: PlayerEntity,
         currentGame:GameEntity,
-        currentPlayerTransition: AbstractTransition<PlayerState>?,
-        currentGameTransition: AbstractTransition<GameState>?
+        currentPlayerTransition: AbstractTransition<PlayerState>,
+        currentGameTransition: AbstractTransition<GameState>,
+        transitionResponse: TransitionResponse
     ): Unit {
-        if (currentPlayerTransition != null) {
-            if (currentPlayerTransition.nextState != currentPlayer.state) {
-                currentPlayer.state = currentPlayerTransition.nextState
+        if (currentPlayerTransition.nextState != currentPlayer.state) {
+            currentPlayer.state = currentPlayerTransition.nextState
+            transitionResponse.map["PlayerTransition"] = "Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.state}"
 
-                if (currentGameTransition != null) {
-                    currentGame.state = currentGameTransition.nextState
-                    print("""Success[PlayerTransition]: ${currentPlayerTransition.currentState} -> ${currentPlayer.state}
-                           | Success[GameTransition]: ${currentGameTransition.currentState} -> ${currentGame.state}""".trimMargin())
-                }
+            if (currentGameTransition.nextState != currentGame.state) {
+                currentGame.state = currentGameTransition.nextState
+                transitionResponse.map["GameTransition"] = "Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${currentGame.state}"
 
-                print("Success[PlayerTransition]: ${currentPlayerTransition.currentState} -> ${currentPlayer.state}")
+                print("""Success[PlayerTransition]: ${currentPlayerTransition.currentState} -> ${currentPlayer.state}
+                       | Success[GameTransition]: ${currentGameTransition.currentState} -> ${currentGame.state}""".trimMargin())
             }
 
-            print("Error: Current Player State == PlayerTransition.nextState")
+            print("Success[PlayerTransition]: ${currentPlayerTransition.currentState} -> ${currentPlayer.state}")
         }
 
-        print("Error: No such Player or PlayerTransition")
+        print("Error: Current Player State == PlayerTransition.nextState")
     }
 
     @Transactional
@@ -54,21 +56,20 @@ class StateMachine(
     fun handleGameEvent(
         currentPlayer: PlayerEntity,
         currentGame:GameEntity,
-        currentPlayerTransition: AbstractTransition<PlayerState>?,
-        currentGameTransition: AbstractTransition<GameState>?
+        currentPlayerTransition: AbstractTransition<PlayerState>,
+        currentGameTransition: AbstractTransition<GameState>,
+        transitionResponse: TransitionResponse
     ): Unit {
-        if (currentGameTransition != null) {
+        if (currentGameTransition.nextState != currentGame.state) {
             currentGame.state = currentGameTransition.nextState
+            transitionResponse.map["GameTransition"] = "Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${currentGame.state}"
 
-            if (currentPlayerTransition != null)  {
-                if (currentPlayerTransition.nextState != currentPlayer.state) {
-                    currentPlayer.state = currentPlayerTransition.nextState
+            if (currentPlayerTransition.nextState != currentPlayer.state) {
+                currentPlayer.state = currentPlayerTransition.nextState
+                transitionResponse.map["PlayerTransition"] = "Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.state}"
 
-                    print("""Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${currentGame.state}
-                           | Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.state}""".trimMargin())
-                }
-
-                print("Error: Current Player State == PlayerTransition.nextState")
+                print("""Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${currentGame.state}
+                       | Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.state}""".trimMargin())
             }
 
             print("Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${currentGame.state.toString()}")
@@ -94,17 +95,16 @@ class StateMachine(
     fun handleEvent(event: Event,
                     currentPlayer: PlayerEntity,
                     currentGame:GameEntity,
-                    currentPlayerTransition: AbstractTransition<PlayerState>?,
-                    currentGameTransition: AbstractTransition<GameState>?
+                    currentPlayerTransition: AbstractTransition<PlayerState>,
+                    currentGameTransition: AbstractTransition<GameState>,
+                    transitionResponse: TransitionResponse
     ): Unit {
         when (event) {
-            is Event.EventsOfPlayer -> handlePlayerEvent(currentPlayer, currentGame, currentPlayerTransition, currentGameTransition)
-            is Event.EventsOfGame -> handleGameEvent(currentPlayer, currentGame, currentPlayerTransition, currentGameTransition)
+            is Event.EventsOfPlayer -> handlePlayerEvent(currentPlayer, currentGame, currentPlayerTransition, currentGameTransition, transitionResponse)
+            is Event.EventsOfGame -> handleGameEvent(currentPlayer, currentGame, currentPlayerTransition, currentGameTransition, transitionResponse)
             is Event.EventsOfField -> handleFieldEvent()
         }
 
         print("The transition was successful")
     }
 }
-
-

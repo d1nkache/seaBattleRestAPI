@@ -13,20 +13,13 @@ import java.util.*
 
 @Component
 class PlayerMapper {
-    fun asResponse(
-        id: Long,
-        createdAt: LocalDateTime,
-        name: String,
-        state: PlayerState,
-        health: Int,
-        status: PlayerStatus
-    ): PlayerResponse = PlayerResponse(
-            id = id,
-            createdAt = createdAt,
-            name = name,
-            state = state,
-            health = health,
-            status = status
+    fun asResponse(entity: PlayerEntity): PlayerResponse = PlayerResponse(
+            id = entity.id,
+            createdAt = entity.createdAt,
+            name = entity.name,
+            state = entity.state,
+            health = entity.health,
+            status = entity.status
         )
 
     fun asEntity(entity: Optional<PlayerEntity>): PlayerEntity = PlayerEntity(

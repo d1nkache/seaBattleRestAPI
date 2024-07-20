@@ -1,10 +1,13 @@
 package quizbackend.seaBattleApi.RestAPI.service.impl
 
 import org.springframework.stereotype.Service
+import quizbackend.seaBattleApi.RestAPI.database.PlayerEntity
 import quizbackend.seaBattleApi.RestAPI.database.dao.GameDao
 import quizbackend.seaBattleApi.RestAPI.database.dao.PlayerDao
 import quizbackend.seaBattleApi.RestAPI.model.mapper.GameMapper
 import quizbackend.seaBattleApi.RestAPI.model.mapper.PlayerMapper
+import quizbackend.seaBattleApi.RestAPI.model.response.PlayerResponse
+import quizbackend.seaBattleApi.RestAPI.model.response.TransitionResponse
 import quizbackend.seaBattleApi.RestAPI.service.MainMenuService
 import quizbackend.seaBattleApi.stateMachine.StateMachine
 import quizbackend.seaBattleApi.stateMachine.statesAndEvents.*
@@ -21,21 +24,31 @@ class MainMenuServiceImpl(
 ) : MainMenuService {
     val stateMachineObject = StateMachine(playerDao, gameDao)
 
-    override fun initGame(userId: Long, gameId: Long): Any {
+    override fun initGame(userId: Long, gameId: Long): TransitionResponse {
+        val transitionResponse = TransitionResponse(mutableMapOf())
         val currentPlayerTransition = stateMachineObject.findTransition(Event.EventsOfPlayer(PlayerEvent.INIT), PlayerState.NOT_INIT, PlayerTransition.allPlayerTransitions)
         val currentGameTransition = stateMachineObject.findTransition(Event.EventsOfPlayer(PlayerEvent.INIT), GameState.NOT_INIT, GameTransition.allGameTransitions)
         val currentPlayer = playerMapper.asEntity(playerDao.findById(userId))
         val currentGame = gameMapper.asEntity(gameDao.findById(gameId))
 
-        stateMachineObject.handleEvent(
-            Event.EventsOfPlayer(PlayerEvent.INIT),
-            currentPlayer,
-            currentGame,
-            currentPlayerTransition,
-            currentGameTransition
-        )
+        if (currentPlayerTransition != null) {
+            if (currentGameTransition != null) {
+                stateMachineObject.handleEvent(
+                    Event.EventsOfPlayer(PlayerEvent.INIT),
+                    currentPlayer,
+                    currentGame,
+                    currentPlayerTransition,
+                    currentGameTransition,
+                    transitionResponse
+                )
 
-        return ""
+                return transitionResponse
+            }
+        }
+
+        transitionResponse.map["Error"] = "No such Transition"
+
+        return transitionResponse
     }
 
     override fun chooseOnlineGame(userId: Long): Any {
