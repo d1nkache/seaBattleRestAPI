@@ -1,12 +1,15 @@
 package quizbackend.seaBattleApi.restAPI.controller.impl
 
+import org.springframework.web.bind.annotation.RestController
 import quizbackend.seaBattleApi.restAPI.controller.PlayerController
 import quizbackend.seaBattleApi.restAPI.model.messages.DeleteMessage
 import quizbackend.seaBattleApi.restAPI.model.request.PlayerRequest
 import quizbackend.seaBattleApi.restAPI.model.response.PlayerResponse
+import quizbackend.seaBattleApi.restAPI.service.PlayerService
 
+@RestController
 class PlayerControllerImpl(
-    private val service PlayerService
+    private val service: PlayerService
 ) : PlayerController {
     override fun createPlayer(request: PlayerRequest): PlayerResponse = service.createPlayer(request)
     override fun getUserById(userId: Int): PlayerResponse = service.getUserById(userId)

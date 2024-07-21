@@ -6,7 +6,7 @@ import quizbackend.seaBattleApi.restAPI.model.response.PlayerResponse
 
 interface PlayerService {
     fun createPlayer(request: PlayerRequest): PlayerResponse
-    fun getUserById(userId: Int): PlayerResponse
+    fun getUserById(userId: Long): PlayerResponse
     fun getAllUsers(): List<PlayerResponse>
-    fun deleteUserById(userId: Int): DeleteMessage
+    fun deleteUserById(userId: Long): DeleteMessage
 }
