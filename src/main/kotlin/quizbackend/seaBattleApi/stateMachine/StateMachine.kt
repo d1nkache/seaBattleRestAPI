@@ -3,12 +3,13 @@ package quizbackend.seaBattleApi.stateMachine
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.Modifying
+import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import quizbackend.seaBattleApi.restAPI.database.GameEntity
-import quizbackend.seaBattleApi.restAPI.database.PlayerEntity
-import quizbackend.seaBattleApi.restAPI.database.dao.GameDao
-import quizbackend.seaBattleApi.restAPI.database.dao.PlayerDao
-import quizbackend.seaBattleApi.restAPI.model.response.TransitionResponse
+import quizbackend.seaBattleApi.RestAPI.database.GameEntity
+import quizbackend.seaBattleApi.RestAPI.database.PlayerEntity
+import quizbackend.seaBattleApi.RestAPI.database.dao.GameDao
+import quizbackend.seaBattleApi.RestAPI.database.dao.PlayerDao
+import quizbackend.seaBattleApi.RestAPI.model.response.TransitionResponse
 import quizbackend.seaBattleApi.stateMachine.statesAndEvents.*
 import quizbackend.seaBattleApi.stateMachine.transitions.AbstractTransition
 
@@ -16,7 +17,7 @@ import quizbackend.seaBattleApi.stateMachine.transitions.AbstractTransition
 // вместо которых будут данные из бд о текузем юзере
 
 
-@Configuration
+@Service
 class StateMachine(
     private val playerDao: PlayerDao,
     private val gameDao: GameDao
@@ -25,27 +26,29 @@ class StateMachine(
     @Modifying
     fun handlePlayerEvent(
         currentPlayer: PlayerEntity,
-        currentGame:GameEntity,
+        currentGame: GameEntity,
         currentPlayerTransition: AbstractTransition<PlayerState>,
         currentGameTransition: AbstractTransition<GameState>,
         transitionResponse: TransitionResponse
     ): Unit {
         if (currentPlayerTransition.nextState != currentPlayer.state) {
+            println(currentPlayerTransition.nextState)
             currentPlayer.state = currentPlayerTransition.nextState
             transitionResponse.map["PlayerTransition"] = "Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.state}"
 
             if (currentGameTransition.nextState != currentGame.state) {
                 currentGame.state = currentGameTransition.nextState
                 transitionResponse.map["GameTransition"] = "Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${currentGame.state}"
-
-                print("""Success[PlayerTransition]: ${currentPlayerTransition.currentState} -> ${currentPlayer.state}
+                println("""Success[PlayerTransition]: ${currentPlayerTransition.currentState} -> ${currentPlayer.state}
                        | Success[GameTransition]: ${currentGameTransition.currentState} -> ${currentGame.state}""".trimMargin())
+
+                return
             }
 
-            print("Success[PlayerTransition]: ${currentPlayerTransition.currentState} -> ${currentPlayer.state}")
-        }
+            println("Success[PlayerTransition]: ${currentPlayerTransition.currentState} -> ${currentPlayer.state}")
 
-        print("Error: Current Player State == PlayerTransition.nextState")
+            return
+        }
     }
 
     @Transactional
@@ -67,9 +70,13 @@ class StateMachine(
 
                 print("""Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${currentGame.state}
                        | Success[PlayerTransition]: ${currentPlayerTransition.currentState.toString()} -> ${currentPlayer.state}""".trimMargin())
+
+                return
             }
 
             print("Success[GameTransition]: ${currentGameTransition.currentState.toString()} -> ${currentGame.state.toString()}")
+
+            return
         }
 
         print("Error: No such Player or PlayerTransition")
@@ -89,6 +96,8 @@ class StateMachine(
         }
     }
 
+    @Transactional
+    @Modifying
     fun handleEvent(event: Event,
                     currentPlayer: PlayerEntity,
                     currentGame:GameEntity,
