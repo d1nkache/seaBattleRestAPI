@@ -4,3 +4,4 @@ Controllers:
 
 GET: /api/health
 POST: /api/init
+Delete:
