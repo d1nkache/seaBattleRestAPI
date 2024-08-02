@@ -1,4 +1,4 @@
-Rest API for pvp Sea Battle with StateMachine Pattern
+Rest API for pvp Sea Battle with StateMachine Pattern.
 
 Controllers: 
 
@@ -9,6 +9,5 @@ PUT:
 PATCH:
 
 Services:
-
 
 Links:
